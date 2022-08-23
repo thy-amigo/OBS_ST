@@ -15,27 +15,27 @@ def gen(info_dic):
     template.append('Problem Description')
     template.append('='*5)
     template.append(info_dic['Problem Description'])
-    template.append('-'*10)
+    template.append('')
     
     template.append('Call Flow')
     template.append('='*5)
     template.append(info_dic['Call Flow'])
-    template.append('-'*10)
+    template.append('')
     
     template.append('User Details')
     template.append('='*5)
     template.append(info_dic['User Details'])
-    template.append('-'*10)
+    template.append('')
     
     template.append('Device Details')
     template.append('='*5)
     template.append(info_dic['Device Details'])
-    template.append('-'*10)
+    template.append('')
     
     template.append('Troubleshooting Done / Case History')
     template.append('='*5)
     template.append(info_dic['Troubleshooting Done / Case History'])
-    template.append('-'*10)
+    template.append('')
     
     
     return template
@@ -43,15 +43,15 @@ def gen(info_dic):
     
 st.header('CTS3 TEMPLATE')
 
-pd = st.text_input(label='Problem Description')
+pd = st.text_area(label='Problem Description', height = 100)
 
-cf = st.text_input(label='Call Flow')
+cf = st.text_area(label='Call Flow', height = 100)
 
-ud = st.text_input(label='User Details')
+ud = st.text_area(label='User Details', height = 100)
 
-dd = st.text_input(label='Device Details')
+dd = st.text_area(label='Device Details', height = 100)
 
-td = st.text_input(label='Troubleshooting Done / Case History')
+td = st.text_area(label='Troubleshooting Done / Case History', height = 100)
 
 info_dic = {'Problem Description': pd,
             'Call Flow': cf,
