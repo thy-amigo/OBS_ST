@@ -66,7 +66,7 @@ with st.sidebar:
 if mode == 'CTS3 Template':
   
     st.header('CTS3 TEMPLATE')
-    
+    st.text('          -script by Sunil')
     pd = st.text_area(label='Problem Description', height = 100)
     
     cf = st.text_area(label='Call Flow', height = 100)
@@ -101,7 +101,7 @@ if mode == 'CTS3 Template':
 
 elif mode == 'Trace Lookup':
     st.header('TRACE LOOKUP')
-    
+    st.text('          -script by Navneet')
     trace_lookup = {'CUCM': {'CUCM trace Lookup': {'CALL RELATED ISSUES': ['''
                                                                            a. Call manager and CTI Manager logs
                                                                            b. Event Viewer - Application and Event Viewer - System logs.
@@ -141,7 +141,8 @@ elif mode == 'Trace Lookup':
                                                                   b. Cisco DRF Local.
                                                                   c. Failure logs from the DRF 'Current Status' page.
                                                                   '''],
-                                                   'PHONE REGISTRATION': ['''a. Detailed Cisco Call Manager traces.
+                                                   'PHONE REGISTRATION': ['''
+                                                                          a. Detailed Cisco Call Manager traces.
                                                                           b. Packet captures from both sides - CUCM server and IP Phone or the switch port to which the IP Phone is connected.
                                                                           c. Event Viewer - Application and Event Viewer - System logs.
                                                                           d. Phone Status Messages.
@@ -159,12 +160,14 @@ elif mode == 'Trace Lookup':
                                                                 c. Cisco CDR Agent.
                                                                 d. Cisco CDR Repository Manager
                                                                 '''],
-                                                   'SECURITY - Such as IP Phone rejected due to security errors/ TLS Connections not setting up': ['''a. Detailed Cisco Call Manager traces.
+                                                   'SECURITY - Such as IP Phone rejected due to security errors/ TLS Connections not setting up': ['''
+                                                                                                                                                    a. Detailed Cisco Call Manager traces.
                                                                                                                                                     b. Cisco CTL Provider.
                                                                                                                                                     c. Cisco Trust Verification Service.
                                                                                                                                                     d. Cisco Certificate Authority Proxy Function.
                                                                                                                                                     '''],
-                                                   'MEDIA RESOURCES - MOH not working/ DTMF issues/ No Ringback/ Conference drops/ MTP or XCoder Allocation failures': [''' a. Detailed Cisco Call Manager traces.
+                                                   'MEDIA RESOURCES - MOH not working/ DTMF issues/ No Ringback/ Conference drops/ MTP or XCoder Allocation failures': [''' 
+                                                                                                                                                                        a. Detailed Cisco Call Manager traces.
                                                                                                                                                                         b. Cisco IP Voice Media Streaming App.
                                                                                                                                                                         c. Event Viewer - Application and Event Viewer - System logs.
                                                                                                                                                                         '''],
@@ -176,7 +179,8 @@ elif mode == 'Trace Lookup':
                                                                 e. Cisco RISDC and Perfmon Logs for a particular period of time before the core was created.
                                                                 f. Outputs of 'show status', 'utils diagnose test', 'show process load', 'show process using-most memory/cpu'
                                                                 '''],
-                                                   'GUI DISPLAYS WRONG STATUS INFORMATION':['''a. Cisco CCMAdmin Web Service.                                                                                            
+                                                   'GUI DISPLAYS WRONG STATUS INFORMATION':['''
+                                                                                            a. Cisco CCMAdmin Web Service.                                                                                            
                                                                                             b. Cisco Common User Interface.
                                                                                             c. Cisco Database Layer Monitor.
                                                                                             d. Cisco Database Notification Service.
@@ -854,10 +858,12 @@ elif mode == 'Trace Lookup':
                                                     
                                                     '''],
                                  'Advance Gateway debugs': ['''
-                                                            Advance Gateway debugs
+                                                            # Advance Gateway debugs
                                                             ===========================
                                                             AFW (application)
+                                                            
                                                             debug voip application accounting             AFW accounting debug
+                                                            
                                                             debug voip application all                    all application messages
                                                             debug voip application callfeature            call feature debug
                                                             debug voip application callindependss         call-independent supplserv debug
@@ -1154,61 +1160,40 @@ elif mode == 'Trace Lookup':
                                                             
                                                             '''],
                                  'Gateway Show commands':['''
-                                                            show cdp – It will show CDP Timer and Holdtime Frequency
-                                                            show cdp neighbors detail – It will show details of neighbor with an IP Address and IOS version                                                            
+                                                            show cdp – It will show CDP Timer and Holdtime Frequency                                                            
+                                                            show cdp neighbors detail – It will show details of neighbor with an IP Address and IOS version                            
                                                             show cdp neighbors – It will show details of Device ID, Local Interface, Holdtime, Capability, Platform and Port ID                                                            
                                                             show cdp interface – It will show details of the interface if it is Up physically, Line protocol is up, Encapsulation and Holdtime.                                                            
                                                             show cdp traffic – It will show details of the CDP counters (CDP packets sent and received)                                                            
                                                             show voice call summary – It will show all the active calls on the Gateway, Ports, Codec, VAD (enabled or not), VTSP state and VPM state                                                            
                                                             show voice call status – It will show only the active calls, not all the ports. It includes Port, Called Number, and Dial Peer
-                                                            
                                                             show call history voice record – It will show information about calls made to and from the voice router
-                                                            
                                                             show voice port summary – It will show a detailed information on Ports, Channel, Signalling Type, Port Status, In Operation Status, Out Status and EC. It basically shows FXO/FXS/PRI ports in use.
-                                                            
                                                             show gateway – It will show the state and version is H.323
-                                                            
                                                             show dialplan number 1000 – It will show you what happens when the specified number is dialed
-                                                            
                                                             show dial-peer voice summary – It will show you what all dial-peers that are currently working. Summary of dial-peers/destination.
-                                                            
                                                             show voip rtp connections  – It will show all the current RTP connections which will have Local and Remote IP Address, Port Numbers, Call IDs.
-                                                            
                                                             show controllers T1    or   show controllers E1 – It will show the status of a controller if it is up or down
-                                                            
                                                             show call active voice brief – It will show the active call information which includes Call ID, Peer IP Address and Codecs
-                                                            
                                                             show mgcp  – It will show mgcp settings on the gateway
-                                                            
                                                             show dial-peer voice – It will show how voice dial peers are configured.
-                                                            
                                                             show mgcp statistics  – It will show mgcp statistics relationship between the devices which will have stats for CRCX, DLCX, MDCX and RSIP,  IP addresses of Call Agents etc
-                                                            
                                                             show mgcp endpoint –  It will show information related to MGCP endpoints
-                                                            
                                                             show mgcp connection  – It will show information about the current mgcp connections
-                                                            
                                                             show sip-ua register status – It will show SIP Registration information
-                                                            
                                                             show voice dsp – It will show the status of all the DSPs on the Gateway
-                                                            
                                                             show ccm-manager  – It will show information about the active and redundant configured Cisco Unified Communications Manager. This command also indicates if the gateway is currently registered with Cisco Unified Communications Manager.
-                                                            
                                                             show isdn active – It will show if a call is in progress and which number is being dialed.
-                                                            
                                                             show isdn status – It will show statistics of an ISDN connection and show if your PRI is up/established correctly
-                                                            
                                                             show ccm-manager fallback – It will show whether MGCP fallback is enabled or disabled, if enabled, whether it is currently active or not.
-                                                            
                                                             show sip service – It will help to display the status of SIP call service in a SIP gateway
-                                                            
                                                             show sip-ua status – It will help to display status for the SIP user agent (UA), including whether call redirection is enabled or disabled
-                                                            
                                                             cdp enable – It will enabled CDP on an interface                                                            
                                                             no cdp enable – It will disable CDP on an interface                                                            
                                                             test voice translation-rule – It will allow you to test a translation rule configured on the gateway.                                                            
                                                             Csim start XXXXX – It is a hidden command which helps to generate calls 
                                                             '''],
+                                                               
                                  'Other issues': {'Router High CPU': ['''
                                                                         Please collect the following information collected on a periodic (hourly) basis:
                                                                         --------------------------------------------------------------------------------
@@ -1574,7 +1559,7 @@ elif mode == 'Trace Lookup':
                                                                                                                          },
                'Unity Connection': ['''
                                     Problem Area:
-                            
+                                    --------------
                                     Audio Issues
                                     Playing an attachment via the TUI
                             
@@ -1593,7 +1578,8 @@ elif mode == 'Trace Lookup':
                                     ========================
                                     
                                     Problem Area:
-                            
+                                    --------------
+                                    
                                     Calendar Integration Issues
                                     Calendar integration
                             
@@ -1612,7 +1598,7 @@ elif mode == 'Trace Lookup':
                                     =====================
                                     
                                     Problem Area:
-                            
+                                    --------------
                                     Call Issues: Routing rules
                             
                                     Micro Traces to Set
@@ -1627,45 +1613,35 @@ elif mode == 'Trace Lookup':
                                     =====================
                                     
                                     Problem Area:
-                            
+                                    --------------
+                                    
                                     Unity Connection Cluster Issues: Unity Connection clusters (except file replication)
-                            
                                     Micro Traces to Set
-                            
                                     SRM (all levels)
-                            
                                     RTMT Service to Select while taking logs
-                            
                                     Connection Server Role Manager
                             
                                     =====================
                                     
                                     Problem Area:
-                            
+                                    --------------
                                     Unity Connection Cluster Issues: Unity Connection cluster file replication
                             
                                     Micro Traces to Set
-                            
                                     CuFileSync (all levels)
-                            
                                     RTMT Service to Select while taking logs
-                            
                                     Connection File Syncer
-                            
+                                    
                                     =====================
                                     
                                     Problem Area:
-                            
-                                    External Message Store Issues: Accessing emails in an external message store
+                                    --------------
+                                    External Message Store Issues: Accessing emails in an external message store                            
                             
                                     Micro Traces to Set
-                            
                                     CML (all levels)
-                            
                                     RTMT Service to Select while taking logs
-                            
                                     Connection Conversation Manager
-                                    
                                     Connection Tomcat Application
                             
                                     =====================
@@ -1675,73 +1651,59 @@ elif mode == 'Trace Lookup':
                                     LDAP Issues: LDAP synchronization
                             
                                     Micro Traces to Set
-                            
                                     CuCmDbEventListener
-                            
                                     RTMT Service to Select while taking logs
-                            
                                     Connection CM Database Event Listener
                             
                                     =====================
                                     
                                     Problem Area:
-                            
+                                    --------------
+                                    
                                     Message Issues
                             
                                     Micro Traces to Set
-                            
                                     MTA (all levels)
-                            
                                     RTMT Service to Select while taking logs
-                            
                                     Connection Message Transfer Agent
-                                    
+                       
                                     =====================
                                     
                                     Problem Area:
-                            
+                                    --------------
                                     Message Relay Issues
-                            
+                             
                                     Micro Traces to Set
-                            
                                     MTA (all levels)
                                     SMTP (all levels)
-                            
                                     RTMT Service to Select while taking logs
-                            
                                     Connection Message Transfer Agent
                                     Connection SMTP Server
                                     
                                     =====================
                                     
                                     Problem Area:
-                            
+                                    --------------
                                     Notifications not sent
                             
                                     Micro Traces to Set
-                            
                                     CuCsMgr (all levels)
                                     Notifier (all levels except 6 and 7)
-                            
                                     RTMT Service to Select while taking logs
-                            
                                     Connection Conversation Manager
                                     Connection Notifier
                             
                                     =====================
                                     
                                     Problem Area:
-                            
+                                    --------------
                                     Jabber VoiceMail Issue
                             
                                     Micro Traces to Set
-                            
                                     Notifier (level 18 and 21)
                                     Cuca
                                     VMREST
-                            
                                     RTMT Service to Select while taking logs
-                            
                                     Cisco Tomcat
                                     Connection Jetty
                                     Connection Notifier
@@ -1750,11 +1712,10 @@ elif mode == 'Trace Lookup':
                                     =====================
                                     
                                     Problem Area:
-                            
+                                    --------------
                                     Visual VoiceMail Issue
                             
                                     Micro Traces to Set
-                            
                                     TRAP - (all levels)
                                     VMREST (all levels)
                                     Arbiter - (level 12 to17)
@@ -1780,37 +1741,33 @@ elif mode == 'Trace Lookup':
                                     =====================
                                     
                                     Problem Area:
-                            
+                                    --------------
                                     SAML SSO Issues
                             
                                     Traces to Set
                             
                                     CLI Command to activate SAML SSO logs:
-                            
                                     admin: set samltrace level <trace-level> where trace-level can be BEBUG, INFO, WARNING, ERROR, or FATAL
-                            
+                                    
                                     CLI Command to check trace level:
-                            
                                     admin: show samltrace level
-                            
+                                    
                                     RTMT Service to Select while taking logs
                             
                                     Cisco Tomcat
-                            
                                     Cisco Tomcat Security
-                            
                                     Cisco SSO
                             
                                     =====================
                                     
                                     Problem Area:
-                            
+                                    --------------
+                                    
                                     Audio Issues
                             
                                     Macro Traces to Set
-                            
                                     Media (Wave) Traces
-                            
+                                    
                                     RTMT Service to Select while taking logs
                             
                                     Connection Conversation Manager
@@ -1819,11 +1776,10 @@ elif mode == 'Trace Lookup':
                                     =====================
                                     
                                     Problem Area:
-                            
+                                    --------------
                                     Call Issues
                             
                                     Macro Traces to Set
-                            
                                     Call Control (Miu) Traces (expand the macro trace to select SIP or SCCP)
                                     Call Flow Diagnostics
                             
@@ -1846,13 +1802,9 @@ elif mode == 'Trace Lookup':
                                                                                                 ## Traces Used to Investigate Login and Authentication Issues Service:
                                                                                 
                                                                                                 Cisco Client Profile Agent (CPA)
-                                                                                
                                                                                                 Cisco XCP Connection Manager
-                                                                                
                                                                                                 Cisco XCP Router
-                                                                                
                                                                                                 Cisco XCP Authentication Service
-                                                                                
                                                                                                 Cisco Tomcat Security Logs
                                                                                                 '''],
                                                                                                 
@@ -1864,9 +1816,7 @@ elif mode == 'Trace Lookup':
                                                                                                         Perform traces for the listed services on the IM and Presence Service node on which the end users and contacts are provisioned.
                                                                                         
                                                                                                         Cisco XCP Connection Manager
-                                                                                        
                                                                                                         Cisco XCP Router
-                                                                                        
                                                                                                         Cisco Presence Engine
                                                                                         
                                                                                                         -End user has issues with their self availability status, including on-the-phone or meeting status.
@@ -1874,17 +1824,13 @@ elif mode == 'Trace Lookup':
                                                                                                         Perform traces for the listed services on the IM and Presence Service node on which the end user is provisioned.
                                                                                         
                                                                                                         Cisco XCP Connection Manager
-                                                                                        
                                                                                                         Cisco XCP Router
-                                                                                        
                                                                                                         Cisco Presence Engine
                                                                                         
                                                                                                         -End user has issues sending or receiving instant messages.
                                                                                         
                                                                                                         Perform traces for the listed services on the IM and Presence Service nodes on which the sender and recipient are provisioned.
-                                                                                        
                                                                                                         Cisco XCP Connection Manager
-                                                                                        
                                                                                                         Cisco XCP Router 
                                                                                                         '''],
                         'End user is experiencing issues': ['''
@@ -1896,17 +1842,13 @@ elif mode == 'Trace Lookup':
                                                             Perform traces for the listed services on the IM and Presence Service node on which the chat room members are provisioned.
                                             
                                                             Cisco XCP Connection Manager
-                                            
                                                             Cisco XCP Router
-                                            
                                                             Cisco XCP Text Conferencing Manager
                                             
                                                             -The node on which the chat room that is experiencing difficulties is hosted and the node on which the creator is provisioned are not the same.
                                             
                                                             Perform an initial trace analysis to determine which node hosted the chat room. Then perform traces for the following services on the IM and Presence Service node that hosted the chat room.
-                                            
                                                             Cisco XCP Text Conferencing Manager
-                                            
                                                             Cisco XCP Router
                                                             '''],
                         'Traces Used to Investigate Intercluster Sycnronization Issues Between Nodes': ['''
@@ -1924,16 +1866,13 @@ elif mode == 'Trace Lookup':
                                                                                 ## Traces Used to Investigate XMPP Federation Issues:
                                                                 
                                                                                 Cisco XCP Router
-                                                                
                                                                                 Cisco XCP XMPP Federation Connection Manager
                                                                             '''],
                         'SIP Federation Traces': ['''
                                                     ## SIP Federation Traces:
                                     
                                                     Cisco SIP Proxy
-                                    
                                                     Cisco XCP Router
-                                    
                                                     Cisco XCP SIP Federation Connection Manager
                                                 '''],
                         'CLI Commands Used to Investigate High CPU and Low VM Alerts': ['''
@@ -1942,13 +1881,10 @@ elif mode == 'Trace Lookup':
                                                                                         Use the CLI to run the following commands on the node.
                                                                         
                                                                                         show process using-most cpu
-                                                                        
                                                                                         show process using-most memory
-                                                                        
                                                                                         utils dbreplication runtimestate
-                                                                        
                                                                                         utils service list
-                                                                        
+                                                                                        
                                                                                         Use the CLI to collect all RIS (Real-time Information Service) performance logs for the node. Use only SFTP servers for file transfers using file get.
                                                                         
                                                                                         file get activelog cm/log/ris/csv
@@ -1957,15 +1893,10 @@ elif mode == 'Trace Lookup':
                                                                                     ## Traces Used to Investigate High CPU and Low VM Alerts:
                                                                     
                                                                                     Cisco XCP Router
-                                                                    
                                                                                     Cisco XCP SIP Federation Connection Manager
-                                                                    
                                                                                     Cisco SIP Proxy
-                                                                    
                                                                                     Cisco Presence Engine
-                                                                    
                                                                                     Cisco Tomcat Security Log
-                                                                    
                                                                                     Cisco Syslog Agent
                                                                                 ''']
                                                                                 },
@@ -2001,13 +1932,10 @@ elif mode == 'Trace Lookup':
                                                                                     ## Packet capture from ISR G3 Gateway:
                                                                             
                                                                                     monitor capture TAC interface gig0/0
-                                                                                    
                                                                                     monitor capture TAC buffer 10 ( in MB)
-                                                                                    
                                                                                     monitor capture TAC match ipv4 protocol udp any any
-                                                                            
                                                                                     monitor capture TAC start
-                                                                            
+
                                                                                     make a test call
                                                                             
                                                                                     monitor capture TAC stop
@@ -2158,9 +2086,9 @@ elif mode == 'Trace Lookup':
         
         if type(trace_levels) == list:
             
-            st.code(trace_levels)
+            # st.code(trace_levels)
             info = nice_print(trace_levels)
-            # st.write(info)
+            st.text(info)
         
         else:                    
             option_1 = st.selectbox('',options = trace_levels.keys())
@@ -2169,7 +2097,7 @@ elif mode == 'Trace Lookup':
                 
                 # st.markdown(trace_levels[option_1])
                 info = nice_print(trace_levels[option_1])
-                st.write(info)
+                st.text(info)
                 
             else:
                 option_2 = st.selectbox('',options = trace_levels[option_1].keys())
@@ -2177,9 +2105,6 @@ elif mode == 'Trace Lookup':
                 if type(trace_levels[option_1][option_2]) == list:
                     
                     info = nice_print(trace_levels[option_1][option_2])
-                    st.write(info)
+                    # st.code(info)
+                    st.text(info)
                     
-                # for k,v in trace_levels[option_1].items():
-                #     if k
-                
-    
