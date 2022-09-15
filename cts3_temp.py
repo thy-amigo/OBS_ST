@@ -7,13 +7,28 @@ Created on Mon Aug 22 17:52:54 2022
 
 import streamlit as st
 
+# REMOVE HEADER FOOTER, MAIN MENU AND TOP SPACE
 hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
+            div.block-container {padding-top:1rem;}
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+
+col1, col2 = st.columns([1,1])
+
+with col1:  
+    col1 = st.markdown("<h1 style='text-align: Right; color: red;'>JARVIS</h1>", unsafe_allow_html=True)
+
+    # col1 = st.write('')
+
+with col2:
+    st.write('')
+    st.write('')
+    st.write('')
+    col2 = st.text('-By Saurabh')
 
 def gen(info_dic):
        
