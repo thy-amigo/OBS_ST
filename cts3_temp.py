@@ -34,6 +34,13 @@ def gen(info_dic):
        
     template = []
     
+    for k, v in info_dic.items():
+        
+        template.append(k)
+        template.append('='*5)
+        template.append(v)
+        template.append('')
+    _= '''    
     template.append('Problem Description')
     template.append('='*5)
     template.append(info_dic['Problem Description'])
@@ -84,16 +91,16 @@ def gen(info_dic):
     template.append(info_dic['Previous Oceane Ticket (if Any)'])
     template.append('')
     
-    template.append('Proposed Acton by CTS2 (If Any)')
+    template.append('Proposed Acton by CTS2 (if Any)')
     template.append('='*5)
-    template.append(info_dic['Proposed Acton by CTS2 (If Any)'])
+    template.append(info_dic['Proposed Acton by CTS2 (if Any)'])
     template.append('')
     
     template.append('Support required from CTS3')
     template.append('='*5)
     template.append(info_dic['Support required from CTS3'])
     template.append('')
-    
+    '''
     
     return template
         
@@ -137,9 +144,11 @@ if mode == 'CTS3 Template':
     
     ocn_tckt = st.text_input(label='Previous Oceane Ticket (if Any)')
     
-    pp_ap_cts2 = st.text_area(label='Proposed Acton by CTS2 (If Any)', height = 100)
+    pp_ap_cts2 = st.text_area(label='Proposed Acton by CTS2 (if Any)', height = 100)
     
     pp_ap_cts3 = st.text_area(label='Support required from CTS3', height = 100)
+    
+    cur_status = st.text_area(label='Current Status', height = 100)
     
     
     info_dic = {'Problem Description': pd,
@@ -152,8 +161,10 @@ if mode == 'CTS3 Template':
                 'Trace / Logs Location': tl_l,
                 'TAC / Vendor Ticket': tckt,
                 'Previous Oceane Ticket (if Any)': ocn_tckt,
-                'Proposed Acton by CTS2 (If Any)': pp_ap_cts2,
-                'Support required from CTS3': pp_ap_cts3}
+                'Proposed Acton by CTS2 (if Any)': pp_ap_cts2,
+                'Support required from CTS3': pp_ap_cts3,
+                'Current Status': cur_status
+                }
     
     # st.button(label='GENERATE')
     
