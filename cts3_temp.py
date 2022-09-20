@@ -49,14 +49,49 @@ def gen(info_dic):
     template.append(info_dic['User Details'])
     template.append('')
     
-    template.append('Device Details')
+    template.append('Site & Device Details')
     template.append('='*5)
-    template.append(info_dic['Device Details'])
+    template.append(info_dic['Site & Device Details'])
+    template.append('')
+    
+    template.append('Business Impact')
+    template.append('='*5)
+    template.append(info_dic['Business Impact'])
     template.append('')
     
     template.append('Troubleshooting Done / Case History')
     template.append('='*5)
     template.append(info_dic['Troubleshooting Done / Case History'])
+    template.append('')
+    
+    template.append('Trace / Logs collected')
+    template.append('='*5)
+    template.append(info_dic['Trace / Logs collected'])
+    template.append('')
+    
+    template.append('Trace / Logs Location')
+    template.append('='*5)
+    template.append(info_dic['Trace / Logs Location'])
+    template.append('')
+    
+    template.append('TAC / Vendor Ticket')
+    template.append('='*5)
+    template.append(info_dic['TAC / Vendor Ticket'])
+    template.append('')
+    
+    template.append('Previous Oceane Ticket (if Any)')
+    template.append('='*5)
+    template.append(info_dic['Previous Oceane Ticket (if Any)'])
+    template.append('')
+    
+    template.append('Proposed Acton by CTS2 (If Any)')
+    template.append('='*5)
+    template.append(info_dic['Proposed Acton by CTS2 (If Any)'])
+    template.append('')
+    
+    template.append('Support required from CTS3')
+    template.append('='*5)
+    template.append(info_dic['Support required from CTS3'])
     template.append('')
     
     
@@ -88,15 +123,37 @@ if mode == 'CTS3 Template':
     
     ud = st.text_area(label='User Details', height = 100)
     
-    dd = st.text_area(label='Device Details', height = 100)
+    dd = st.text_area(label='Site & Device Details', height = 100)
+    
+    bi = st.selectbox(label='Business Impact', options = ['High', 'Medium', 'Low'])
     
     td = st.text_area(label='Troubleshooting Done / Case History', height = 100)
+    
+    tl_c = st.text_area(label='Trace / Logs collected', height = 100)
+    
+    tl_l = st.text_area(label='Trace / Logs Location', height = 100)
+    
+    tckt = st.text_input(label='TAC / Vendor Ticket')
+    
+    ocn_tckt = st.text_input(label='Previous Oceane Ticket (if Any)')
+    
+    pp_ap_cts2 = st.text_area(label='Proposed Acton by CTS2 (If Any)', height = 100)
+    
+    pp_ap_cts3 = st.text_area(label='Support required from CTS3', height = 100)
+    
     
     info_dic = {'Problem Description': pd,
                 'Call Flow': cf,
                 'User Details': ud,
-                'Device Details': dd,
-                'Troubleshooting Done / Case History': td}
+                'Site & Device Details': dd,
+                'Business Impact': bi,                
+                'Troubleshooting Done / Case History': td,
+                'Trace / Logs collected': tl_c,
+                'Trace / Logs Location': tl_l,
+                'TAC / Vendor Ticket': tckt,
+                'Previous Oceane Ticket (if Any)': ocn_tckt,
+                'Proposed Acton by CTS2 (If Any)': pp_ap_cts2,
+                'Support required from CTS3': pp_ap_cts3}
     
     # st.button(label='GENERATE')
     
