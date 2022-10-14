@@ -6,6 +6,9 @@ Created on Mon Aug 22 17:52:54 2022
 """
 
 import streamlit as st
+from gw.rx_test import rx_call
+from gw.tx_test import tx_call
+from io import StringIO
 
 # REMOVE HEADER FOOTER, MAIN MENU AND TOP SPACE
 hide_streamlit_style = """
@@ -111,9 +114,9 @@ def nice_print(data):
         s += i+'\n'      
     return s
 
-def trace_lookup(device):
+# def trace_lookup(device):
     
-    trace_lookup_dic = {}
+#     trace_lookup_dic = {}
     
 # ADD SIDEBAR OPTIONS
 with st.sidebar:
@@ -2190,4 +2193,90 @@ elif mode == 'Trace Lookup':
                     info = nice_print(trace_levels[option_1][option_2])
                     # st.code(info)
                     st.text(info)
+
+
+elif mode == 'GW Debug':
+    
+    st.header('GW Log Parser')
+    
+    if 'info_button' not in st.session_state:
+        st.session_state['info_button'] = 0
+        
+    if st.button('Info', help = 'Click to know pre-requisites'):
+        
+        if st.session_state['info_button'] == 0:
+            st.session_state['info_button'] = 1
+            st.text('''
+            Below debugs are mandatory for parser to analyze the calls:
+            -debug isdn q931
+            -debug voice ccapi inout
+            -debug ccsip messages
+    
+            Also make sure to collect the debugs in buffer ("service sequence-numbers" is must else parser will not work).
+            Copy paste below commands on router in global configuration mode (conf t) and then collect debugs for analysis.
+    
+            service timestamps debug datetime msec
+            service timestamps log datetime msec
+            service sequence-numbers
+            logging buffered 5000000
+            logging rate-limit 10000
+            logging queue-limit 100000
+            no logging console
+            no logging monitor
+            ''')
+            
+        elif st.session_state['info_button'] == 1:
+            st.session_state['info_button'] = 0
+            st.write('')
+            
+    log_file = st.file_uploader('Select GW Log file', type=['txt', 'log'])
+    # file = []
+    # for line in log_file:
+    #     file.append(line.decode("utf-8"))
+    if log_file is not None:
+      
+        # stringio = StringIO(log_file.getvalue().decode("utf-8"))
+        
+        file = str(log_file.read(),"utf-8").split("\n")
+        # To read file as string:
+        # file = stringio.read().split("\n")
+
+        op_type, ca_type = st.columns([1,1])
+        
+        with op_type:
+            operation_type = st.radio('Choose Call Flow', options = ['Incoming', 'Outgoing'], index= 0)
+        
+        with ca_type:
+            call_type_opt = st.selectbox('Choose Call Type', options = ['sip-isdn', 'sip-sip'])
+            
+            if call_type_opt == 'sip-isdn':
+                call_type = '1'
+            else:
+                call_type = '2'
+            
+        # To read file
+        if operation_type=="Incoming":
+            print('Processing Incoming call!')
+            local_call = rx_call(file, call_type)    
+
+
+        elif operation_type=="Outgoing":
+            print('Processing Outgoing call!')
+            call_details = tx_call(file, call_type)
+            
+            for index, local_call in call_details.items():
+                st.text("-------"+str(index+1)+" Of " + str(len(call_details))+"-------")
+                for key, value in local_call.items():
+                    if key=="ccapi_value":
+                        st.text(key,":",value[0])
+                    else:
+                        st.text(key + " : " , value)
+            
+        if type(local_call) == str:
+            st.text(local_call)
+        
+            # for key, value in local_call.items():
+            #     st.text(key + " : " , value)
                     
+            call_id = st.selectbox("Enter a ccapi value value to see details: ", options = local_call.keys())
+                
