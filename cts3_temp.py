@@ -6,8 +6,9 @@ Created on Mon Aug 22 17:52:54 2022
 """
 
 import streamlit as st
-from gw.rx_test import rx_call
-from gw.tx_test import tx_call
+from gw.rx_test import rx_call, rx_analyse_1, rx_analyse_2
+from gw.tx_test import tx_call, tx_analyse
+
 from io import StringIO
 
 # REMOVE HEADER FOOTER, MAIN MENU AND TOP SPACE
@@ -113,6 +114,19 @@ def nice_print(data):
     for i in data:
         s += i+'\n'      
     return s
+
+def call_type_option():
+    
+    if st.session_state['operation_type'] =="Incoming":
+        call_type_choice = st.selectbox('Choose Call Type', options = ['isdn-sip', 'sip-sip'])
+        
+    elif st.session_state['operation_type'] =="Outgoing":
+        call_type_choice = st.selectbox('Choose Call Type', options = ['sip-isdn', 'sip-sip'])
+    
+    
+    return call_type_choice
+
+
 
 # def trace_lookup(device):
     
@@ -2244,39 +2258,110 @@ elif mode == 'GW Debug':
         op_type, ca_type = st.columns([1,1])
         
         with op_type:
-            operation_type = st.radio('Choose Call Flow', options = ['Incoming', 'Outgoing'], index= 0)
+            st.session_state['operation_type'] = st.radio('Choose Call Flow', options = ['Incoming', 'Outgoing'], index= 0)
         
         with ca_type:
-            call_type_opt = st.selectbox('Choose Call Type', options = ['sip-isdn', 'sip-sip'])
             
-            if call_type_opt == 'sip-isdn':
+            if st.session_state['operation_type']:
+                call_type_opt = call_type_option()
+            
+            if (call_type_opt == 'sip-isdn'
+                or call_type_opt == 'isdn-sip'):
                 call_type = '1'
             else:
                 call_type = '2'
             
         # To read file
-        if operation_type=="Incoming":
+        if st.session_state['operation_type']=="Incoming":
             print('Processing Incoming call!')
-            local_call = rx_call(file, call_type)    
+            call_details = rx_call(file, call_type)    
 
 
-        elif operation_type=="Outgoing":
+        elif st.session_state['operation_type']=="Outgoing":
             print('Processing Outgoing call!')
             call_details = tx_call(file, call_type)
             
-            for index, local_call in call_details.items():
-                st.text("-------"+str(index+1)+" Of " + str(len(call_details))+"-------")
-                for key, value in local_call.items():
-                    if key=="ccapi_value":
-                        st.text(key,":",value[0])
-                    else:
-                        st.text(key + " : " , value)
-            
-        if type(local_call) == str:
-            st.text(local_call)
+        # SHOW CALL DETAILS
         
-            # for key, value in local_call.items():
-            #     st.text(key + " : " , value)
-                    
-            call_id = st.selectbox("Enter a ccapi value value to see details: ", options = local_call.keys())
+        ccapi_list = []
+        
+        if (type(call_details) == str
+            or call_details == None):
+            st.code(call_details)
+            
+        else:
+            
+            for index, local_call in call_details.items():
+                # st.text("-------"+str(index+1)+" Of " + str(len(call_details))+"-------")
                 
+                # st.text(index)
+                # st.code(call_details)
+                code = []
+                code.append("-------"+str(index+1)+" Of " + str(len(call_details))+"-------")
+                
+                # st.text(local_call.items())
+                for key, value in local_call.items():                    
+                    # st.text(key)
+                    # st.text(value)
+                    if key=="ccapi_value":
+                        if type(value) == list:
+                            
+                            st.text(key + " : " + value[0])
+                            code.append(key + " : " + value[0])
+                            
+                            ccapi_list.append(str(index+1) + ' : ' + str(value[0]))
+                        
+                        else:
+                            st.text(key + " : " + value)
+                            code.append(key + " : " + value)
+                            
+                            ccapi_list.append(str(index+1) + ' : ' + str(value))
+                        
+                    else:
+                        # st.text(key + " : " + str(value))
+                        code.append(key + " : " + str(value))
+                
+                # if 'info' not in st.session_state:
+                #     info = nice_print(code)
+                #     st.session_state['info'] = info
+                
+                # st.code(st.session_state['info'])
+                
+                info = nice_print(code)
+                st.code(info)
+                        
+            call_id = st.selectbox("Enter a CCAPI value  to see details: ", options = ccapi_list)
+           
+            ccapi_value = call_id.split(":")[1].strip()
+            
+            if (call_id
+                and st.session_state['operation_type']=="Outgoing"):
+                
+                # st.text(ccapi_value)
+                tx_analysis = tx_analyse(ccapi_value, call_details, file)
+                tx_info = nice_print(tx_analysis)
+                st.code(tx_info)
+                
+            elif (call_id
+                  and st.session_state['operation_type']=="Incoming"
+                  and call_type == '1'):
+                rx_analysis_isdn = rx_analyse_1(ccapi_value, call_details, file)
+                rx_info_isdn = nice_print(rx_analysis_isdn)
+                st.code(rx_info_isdn)
+            
+            elif (call_id
+                  and st.session_state['operation_type']=="Incoming"
+                  and call_type == '2'):
+                rx_analysis_sip = rx_analyse_2(ccapi_value, call_details, file)
+                rx_info_sip = nice_print(rx_analysis_sip)
+                st.code(rx_info_sip)
+            
+        # if type(local_call) == str:
+        #     st.text(local_call)
+        
+        #     # for key, value in local_call.items():
+        #     #     st.text(key + " : " , value)
+                    
+        #     call_id = st.selectbox("Enter a ccapi value value to see details: ", options = local_call.keys())
+        
+        
