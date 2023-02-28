@@ -450,6 +450,8 @@ def causeValueAnalysis(cause):
         127: "Intel:working, unspecified.",
 
     }
+    
+    cause= cause.strip()
     if cause.isnumeric():
         cause=int(cause.strip())
         if cause in caluseValueMapping.keys():

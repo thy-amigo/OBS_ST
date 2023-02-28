@@ -2329,7 +2329,10 @@ elif mode == 'GW Debug':
                 
                 info = nice_print(code)
                 st.code(info)
-                        
+            
+            st.write('')
+            st.write('')
+            st.write('')
             call_id = st.selectbox("Enter a CCAPI value  to see details: ", options = ccapi_list)
            
             ccapi_value = call_id.split(":")[1].strip()

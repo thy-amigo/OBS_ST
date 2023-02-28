@@ -138,7 +138,7 @@ def rx_analyse_1(id_value, info, file):
         if local_call["ccapi_value"].lower() == id_value.lower().strip() :
             # # print()
             details = get_call_specific_details(local_call, file)
-            print("----------Details for ccapi value " + id_value +" ----------")
+            print("\n----------Details for ccapi value " + id_value +" ----------")
             print("\n------------Incoming ISDN set up from PTT: ---------------------\n")
             
             code.append("----------Details for ccapi value " + id_value +" ----------")
@@ -263,10 +263,11 @@ def rx_analyse_1(id_value, info, file):
                         
             
             print("\n-------------------------Cause Value Analysis-------------------\n")
-            print(local_call["cause"],":",causeValueAnalysis(local_call["cause"]))
+            print(f'{local_call["cause"]}',":",causeValueAnalysis(local_call["cause"]))
             
+            # print(type(local_call["cause"]))
             code.append("\n-------------------------Cause Value Analysis-------------------\n")
-            code.append(f'{local_call["cause"]} : {causeValueAnalysis(local_call["cause"])}')
+            code.append(f'\n{local_call["cause"]} : {causeValueAnalysis(local_call["cause"])}')
             
             break
         
@@ -279,7 +280,7 @@ def rx_analyse_1(id_value, info, file):
         # call_id = input("To see call analysis please enter call id: ")
         # ccapi_value = input("To see call analysis please enter ccapi value: ").strip()
         
-def rx_analyse_2(id_value, info, file):
+def rx_analyse_2(ccapi_value, call_details, file):
     
     code =[]
     for index, local_call in call_details.items():
@@ -290,7 +291,7 @@ def rx_analyse_2(id_value, info, file):
             print("--------------------- This call consists of ",len(local_call["call_id"]), " SIP dialog ---------")
             
             code.append("\n\n")
-            code.append(f"--------------------- This call consists of {len(local_call['call_id'])} SIP dialog ---------")
+            code.append(f"\n--------------------- This call consists of {len(local_call['call_id'])} SIP dialog ---------")
             
             counter=0
             postfix=["st","nd","rd","th"]
@@ -299,11 +300,11 @@ def rx_analyse_2(id_value, info, file):
                 counter += 1
                 print("----------------SIP Analysis of "+str(counter)+postfix[counter-1]+" call id ----------------")
                 
-                code.append("----------------SIP Analysis of "+str(counter)+postfix[counter-1]+" call id ----------------")
+                code.append("\n----------------SIP Analysis of "+str(counter)+postfix[counter-1]+" call id ----------------")
                 
                 result = get_contents_with_multiple_keys("SIP/Msg/ccsipDisplayMsg", file, contains=["To:", id])
                 print("-------------------------For call id : " + id, "-------------------------\n")
-                code.append("-------------------------For call id : " + id, "-------------------------\n")
+                code.append("\n-------------------------For call id : " + id, "-------------------------\n")
                 
                 
                 if len(result) == 0:
@@ -323,14 +324,14 @@ def rx_analyse_2(id_value, info, file):
                 pass
             else:
                 print("----------------ISDN LEG Analysis---------------")
-                code.append("----------------ISDN LEG Analysis---------------")
+                code.append("\n----------------ISDN LEG Analysis---------------")
                 for index, local_call in call_details.items():
                     if  call_id in local_call["call_id"]:
                         print("\n\n")
                         print("---------For call ref value: "+ local_call["call_ref"]+"-----------")
                         
                         code.append("\n\n")
-                        code.append("---------For call ref value: "+ local_call["call_ref"]+"-----------")
+                        code.append("\n---------For call ref value: "+ local_call["call_ref"]+"-----------")
                         
                         result = get_call_with_lastdigits_of_call_ref(file, local_call["call_ref"])
                         for line in result:
@@ -341,7 +342,7 @@ def rx_analyse_2(id_value, info, file):
             print(local_call["cause"],":",causeValueAnalysis(local_call["cause"]))
             
             code.append("\n-------------------------Cause Value Analysis-------------------\n")
-            code.append(f"{local_call['cause']} : {causeValueAnalysis(local_call['cause'])}")
+            code.append(f"\n{local_call['cause']} : {causeValueAnalysis(local_call['cause'])}")
 
             result = get_contents_with_keys(local_call["ccapi_value"][0],"CCAPI/cc_api_call_digit_begin", file)
             print("\n---------------DTMF digits pressed for this call :--------------\n")

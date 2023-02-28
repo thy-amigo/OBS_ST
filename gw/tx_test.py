@@ -118,18 +118,18 @@ def tx_analyse(ccapi_value, call_details, file):
             print("--------------------- This call consists of ",len(local_call["call_id"]), " SIP dialog ---------")
             
             code.append("\n\n")
-            code.append(f"--------------------- This call consists of {len(local_call['call_id'])} SIP dialog ---------")
+            code.append(f"\n--------------------- This call consists of {len(local_call['call_id'])} SIP dialog ---------")
             
             counter=0
             postfix=["st","nd","rd","th"]
             for id in local_call["call_id"]:
                 counter += 1
-                print("----------------SIP Analysis of "+str(counter)+postfix[counter-1]+" call id ----------------")
-                code.append("----------------SIP Analysis of "+str(counter)+postfix[counter-1]+" call id ----------------")
+                print("\n----------------SIP Analysis of "+str(counter)+postfix[counter-1]+" call id ----------------")
+                code.append("\n----------------SIP Analysis of "+str(counter)+postfix[counter-1]+" call id ----------------")
                 
                 result = get_contents_with_multiple_keys("SIP/Msg/ccsipDisplayMsg", file, contains=["To:", id])
                 print("-------------------------For call id : " + id, "-------------------------\n")
-                code.append("-------------------------For call id : " + id+ "-------------------------\n")
+                code.append("\n-------------------------For call id : " + id+ "-------------------------\n")
                 
                 if len(result) == 0:
                     print("Not Found")
@@ -145,14 +145,14 @@ def tx_analyse(ccapi_value, call_details, file):
                 pass
             else:
                 print("----------------ISDN LEG Analysis---------------")
-                code.append("----------------ISDN LEG Analysis---------------")
+                code.append("\n----------------ISDN LEG Analysis---------------")
                 for index, local_call in call_details.items():
                     if  local_call["call_id"]:
                         print("\n\n")
                         print("---------For call ref value: "+ local_call["call_ref"]+"-----------")
                         
                         code.append("\n\n")
-                        code.append("---------For call ref value: "+ local_call["call_ref"]+"-----------")
+                        code.append("\n---------For call ref value: "+ local_call["call_ref"]+"-----------")
                         
                         result = get_call_with_lastdigits_of_call_ref(file, local_call["call_ref"])
                         
@@ -177,7 +177,8 @@ def tx_analyse(ccapi_value, call_details, file):
             
             code.append("\n-------------------------Cause Value Analysis-------------------\n")
             code.append(local_call["cause"]+":"+causeValueAnalysis(local_call["cause"]))
-
+            print(local_call)
+            # code.append(local_call)
             return code
 
     '''
