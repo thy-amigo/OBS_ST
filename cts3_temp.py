@@ -140,7 +140,7 @@ def call_type_option():
 # ADD SIDEBAR OPTIONS
 with st.sidebar:
     mode = st.selectbox('SELECT OPTION',
-                        ('CTS3 Template', 'Trace Lookup', 'GW Debug'))
+                        ('CTS3 Template', 'Trace Lookup', 'GW Debug', 'Health Check'))
 
 if mode == 'CTS3 Template':
   
