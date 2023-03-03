@@ -11,6 +11,11 @@ from gw.tx_test import tx_call, tx_analyse
 
 from io import StringIO
 
+import pandas as pd
+import os
+import time
+from libs.ccm_axl_session import *
+
 # REMOVE HEADER FOOTER, MAIN MENU AND TOP SPACE
 hide_streamlit_style = """
             <style>
@@ -2358,7 +2363,86 @@ elif mode == 'GW Debug':
                 rx_analysis_sip = rx_analyse_2(ccapi_value, call_details, file)
                 rx_info_sip = nice_print(rx_analysis_sip)
                 st.code(rx_info_sip)
+
+elif mode == 'Health Check':
+    
+    st.header('Health Check Script')
+    
+    inv_file = st.file_uploader('Select inventory file', type=['csv', 'xls', 'xlsx'])
+    
+    cucm_user = st.text_input(label= 'CUCM Username: ')
+    cucm_pass = st.text_input(label= 'CUCM Password: ', type= 'password')
+    
+    
+    os.environ['AXL_USERNAME'] = cucm_user
+    os.environ['AXL_PASSWORD'] = cucm_pass
+    
+    def health_check(ip, ver):
+        
+        print('Running Health Check')
+        os.environ['CUCM_ADDRESS'] = ip
+        
+        ccm_session = Arms_session()
+        ccm_session.login(ip, ver)
+        
+        # print(ccm_session)
+        
+        # app_user = ccm_session.get_appuser('jarvis_axl')
+        siptrunk_list = ccm_session.get_listSipTrunk()   #ccm_session.get_siptrunk()
+        
+        # return app_user
+        return siptrunk_list
+        
+    # st.text(inv_file.name)
+    if inv_file is not None:
+        
+        if 'csv' in os.path.splitext(inv_file.name)[1]:
+            inv_df = pd.read_csv(inv_file)
+        
+        elif ('xlsx' in os.path.splitext(inv_file.name)[1] or 'xls' in os.path.splitext(inv_file.name)[1]):
+            inv_df = pd.read_excel(inv_file)
             
+        
+        num_devices, ca_type = st.columns([1,1])
+        
+        if 'Equipment  Address (OCN)' in inv_df.columns:
+            column_name = 'Equipment  Address (OCN)'
+            total_devices = len(inv_df['Equipment  Address (OCN)'])
+        
+        elif 'IP' in inv_df.columns:
+            column_name = 'IP'
+            total_devices = len(inv_df['IP'])
+            
+        with num_devices:
+            st.write('')
+            st.write('')
+            st.subheader(f'Number of devices:  {total_devices}')
+            # st.metric(label = '' , value = total_devices)
+       
+        submit_button =  st.button(label = 'Submit')
+        
+        if submit_button:
+            
+            progress_text = "Working on device "
+            pcnt = round(1/len(inv_df[column_name]), 4)
+            progress_bar = st.progress(0.0)
+            i = 0.0
+            
+            for idx in range(len(inv_df[column_name])):
+                # st.write(f'{idx} : {inv_df[column_name].iloc[idx]}')
+                time.sleep(0.01)
+                # print(i)
+                ip = inv_df[column_name].iloc[idx]
+                ver = inv_df['VER'].iloc[idx]
+                siptrunk_list = health_check(ip, ver)
+                
+                
+                i += pcnt
+                
+                progress_bar.progress(i, text=f'{progress_text}{idx+1} of {len(inv_df[column_name])}: {inv_df[column_name].iloc[idx]}')
+            
+            st.code(siptrunk_list)    
+            st.success('Done!')            
         # if type(local_call) == str:
         #     st.text(local_call)
         
