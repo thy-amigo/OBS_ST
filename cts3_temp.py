@@ -37,7 +37,7 @@ with col2:
     st.write('')
     st.write('')
     st.write('')
-    col2 = st.text('-By Saurabh')
+    # col2 = st.text('-By Saurabh')
 
 def gen(info_dic):
        
@@ -145,7 +145,7 @@ with st.sidebar:
 if mode == 'CTS3 Template':
   
     st.header('CTS3 TEMPLATE')
-    st.text('          -script by Sunil')
+    # st.text('          -script by Sunil')
     pd = st.text_area(label='Problem Description', height = 100)
     
     cf = st.text_area(label='Call Flow', height = 100)
@@ -206,7 +206,7 @@ if mode == 'CTS3 Template':
 
 elif mode == 'Trace Lookup':
     st.header('TRACE LOOKUP')
-    st.text('          -script by Navneet')
+    # st.text('          -script by Navneet')
     trace_lookup = {'CUCM': {'CUCM trace Lookup': {'CALL RELATED ISSUES': ['''
                                                                            a. Call manager and CTI Manager logs
                                                                            b. Event Viewer - Application and Event Viewer - System logs.
