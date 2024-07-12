@@ -3,7 +3,6 @@ pandas
 zeep
 lxml
 graphviz
-time
 re
 zipfile
 fnmatch
