@@ -2816,6 +2816,12 @@ elif mode == "Jabber Log Parser":
         # Extract the zip file
         extract_zip(uploaded_file, temp_dir)
 
+        for root, dirs, files in os.walk(temp_dir, topdown=False):
+            for name in files:
+                st.write(os.path.join(root, name))
+            for name in dirs:
+                st.write(os.path.join(root, name))
+                
         log_directory = search_for_jabber_log(temp_dir)
 
         # st.write(log_directory)
