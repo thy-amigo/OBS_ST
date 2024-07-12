@@ -177,9 +177,12 @@ def search_for_jabber_log(directory):
 
     jabber_log_path = False
     for root, dirs, files in os.walk(directory):
-        for filename in fnmatch.filter(files, 'Jabber.log'):
-            jabber_log_path = os.path.join(root, filename)
-            print(f"Found Jabber.log at: {jabber_log_path}")
+        # for filename in fnmatch.filter(files, 'Jabber.log'):
+        for name in files:
+            if name == 'Jabber.log':
+                jabber_log_path = os.path.join(root, name)
+                print(f"Found Jabber.log at: {jabber_log_path}")
+                break
 
     return jabber_log_path  # Return the path of Jabber.log if found
 
