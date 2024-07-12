@@ -3,7 +3,6 @@ pandas
 zeep
 lxml
 graphviz
-re
 zipfile
 fnmatch
 subprocess
