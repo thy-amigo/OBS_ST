@@ -3,7 +3,4 @@ pandas
 zeep
 lxml
 graphviz
-zipfile
-fnmatch
-subprocess
-pathlib
+
