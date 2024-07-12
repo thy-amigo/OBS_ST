@@ -4,4 +4,3 @@ zeep
 lxml
 graphviz
 streamlit_js_eval
-subprocess
