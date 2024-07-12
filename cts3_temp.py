@@ -2808,15 +2808,15 @@ elif mode == "Jabber Log Parser":
 
     if uploaded_file is not None:
         # Temporary directory to extract zip file
-        # temp_dir = os.path.join(os.getcwd(), "temp_dir")
-        # if not os.path.exists(temp_dir):
-        #     os.makedirs(temp_dir)
+        temp_dir = os.path.join(os.getcwd(), "temp_dir")
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
 
-        # print('Temp Path: ', temp_dir)
+        st.write('Temp Path: ', temp_dir)
         # Extract the zip file
-        extract_zip(uploaded_file, '.')
+        extract_zip(uploaded_file, temp_dir)
 
-        log_directory = search_for_jabber_log('.')
+        log_directory = search_for_jabber_log(temp_dir)
 
         # st.write(log_directory)
         request_num, request_dic, nodes, summary = parse_logs(log_directory)
