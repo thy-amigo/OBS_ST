@@ -2812,9 +2812,10 @@ elif mode == "Jabber Log Parser":
         if not os.path.exists(temp_dir):
             os.makedirs(temp_dir)
 
+        print('Temp Path: ', temp_dir)
         # Extract the zip file
         extract_zip(uploaded_file, temp_dir)
-
+        
         log_directory = search_for_jabber_log(temp_dir)
 
         # st.write(log_directory)
