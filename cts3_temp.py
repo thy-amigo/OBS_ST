@@ -6,8 +6,11 @@ Created on Mon Aug 22 17:52:54 2022
 """
 
 import streamlit as st
+from streamlit.components.v1 import html
+from streamlit_js_eval import streamlit_js_eval
 from gw.rx_test import rx_call, rx_analyse_1, rx_analyse_2
 from gw.tx_test import tx_call, tx_analyse
+from graphviz import Digraph
 
 from io import StringIO
 
@@ -15,6 +18,14 @@ import pandas as pd
 import os
 import time
 from libs.ccm_axl_session import *
+
+import re
+import zipfile
+# import tarfile
+import fnmatch
+import subprocess
+from pathlib import Path
+
 
 # REMOVE HEADER FOOTER, MAIN MENU AND TOP SPACE
 hide_streamlit_style = """
@@ -132,15 +143,348 @@ def call_type_option():
     return call_type_choice
 
 
+# Function to unzip files in a directory
+def unzip_files(directory):
+
+    jabber_dir = []
+    for root, dirs, files in os.walk(directory):
+        for filename in files:
+            filepath = os.path.join(root, filename)            
+            if filename.endswith('.zip'):
+                #print(filepath)
+                file_path = filepath.split('.zip')[0]
+                #print(file_path)
+                jabber_dir.append(file_path)
+                with zipfile.ZipFile(filepath, 'r') as zip_ref:
+                    zip_ref.extractall(file_path)
+                    print(f"Extracted: {file_path}")            
+
+    return jabber_dir
+        
+
+# Function to untar files in a directory
+# def untar_files(directory):
+#     for root, dirs, files in os.walk(directory):
+#         for filename in files:
+#             filepath = os.path.join(root, filename)
+#             if filename.endswith('.tar'):
+#                 with tarfile.open(filepath, 'r') as tar_ref:
+#                     tar_ref.extractall(root)
+#                     print(f"Extracted: {filepath}")
+
+# Function to search for Jabber.log file
+def search_for_jabber_log(directory):
+
+    for root, dirs, files in os.walk(directory):
+        for filename in fnmatch.filter(files, 'Jabber.log'):
+            jabber_log_path = os.path.join(root, filename)
+            print(f"Found Jabber.log at: {jabber_log_path}")
+    return jabber_log_path  # Return the path of Jabber.log if found
+
+def open_jabber_log(file_path):
+
+    f = ''
+    try:
+        f = subprocess.run(['xdg-open', file_path])  # For Linux
+    except FileNotFoundError:
+        try:
+            f = subprocess.run(['open', file_path])  # For MacOS
+        except FileNotFoundError:
+            try:
+                with open(file_path, "r") as g: # For Win
+                    f = g.read()
+                # print("Opened FIle: ", f)
+            except FileNotFoundError:
+                print("Could not open the file. Please check your system configuration.")
+    return f
+
+def parse_logs(jabber_log_file):
+
+    if jabber_log_file:
+        # Open Jabber.log file
+        f = open_jabber_log(jabber_log_file)
+    else:
+        print("Jabber.log file not found.")
+    
+    # print(f)
+    # f.read()
+    lines = f.splitlines()
+
+    # print(lines)
+    nodes = []          # NODES FOR UML DIAGRAM
+    desired_lines = []  # To store lines containing '*-----*' and 'request #'
+    req_num = []        # REQUEST NUMBERS
+    req_dic = {}        # LOGS RELATED TO EACH REQUEST WITH REQUEST AS KEY
+    edge_dns_resp = []  # DNS RESPONSE
+    req_logs = []       # LOGS RELATED TO EACH REQUEST
+    resp_dic = {}       # RESPONSE CODES FOR EACH REQUEST
+
+    summary = ""        # LOG ANALYSIS SUMMARY
+
+    # Regular expression to find values inside curly braces
+    # Regular expression patterns
+    url_pattern = r'https://([^/]+)'
+    response_code_pattern = r'HTTP response code (\d+)'
+    hostname_pattern = r'https://([^/]+)'
+    request_number_pattern = r'request #(\d+)'
+    pattern = r'Server: ([^ ]+)'
+
+    # Regular expression pattern to match DNS SRV query name & DNS Record
+
+    srv_pattern = r'DNS query (\S+)\. has succeeded\.'
+    dns_ok = []     # SRV RECORD THAT WAS SUCCESSFUL
+    dns_records = []
+    dns_records_pattern = r'DNS Record: (\S+)'
+
+    uds_server_list = []
+    home_uds_server_list = []
+    cucm_user_id = []
+
+    # Regular expression pattern to match the username
+    email_pattern = r'Set email address: (\S+)'
+    jabber_user = ''    # JABBER USER
+    
+
+    for line in lines:
+        
+        dns_records_pattern_match = re.findall(dns_records_pattern, line)
+
+        if dns_records_pattern_match:
+            for record in dns_records_pattern_match:
+                if record not in dns_records:
+                    dns_records.append(record)
+
+        if jabber_user == '':
+            jabber_user_match = re.search(email_pattern, line)
+
+            # Extract the username if a match is found
+            if jabber_user_match:
+                jabber_user = jabber_user_match.group(1)
+
+        if "UDS_SERVERS" in line:
+            match = re.search(r"Added server :(\S+)", line)
+            if match:
+                if match.group(1) not in uds_server_list:
+                    uds_server_list.append(match.group(1))
+                    # uds_server_list.append('\n')
+
+        elif "HOME_UDS_NODES" in line:
+            match = re.search(r"Added server :https://([^/]+)/cucm-uds/user/([^ ]+)", line)
+            if match:
+                if match.group(1) not in home_uds_server_list:
+                    home_uds_server_list.append(match.group(1))
+                    # home_uds_server_list.append('\n')
+
+                if match.group(2) not in cucm_user_id:
+                    cucm_user_id.append(match.group(2))
+    
+
+        # FIND ALL RELEVANT LINES
+        if '*-----*':
+            req_logs.append(line)
+
+            # Find DNS successful matches
+            srv_matches = re.findall(srv_pattern, line)
+
+            if srv_matches:
+                if srv_matches[0] not in dns_ok:
+                    dns_ok.append(srv_matches[0])
+
+            if 'Srv Records:' in line:
+                # Find all matches
+                matches = re.findall(pattern, line)
+                # print(matches)
+                # Print the matches
+                for match in matches:
+                    if match not in edge_dns_resp:
+                        edge_dns_resp.append(match)
+            
+        # FIND ALL THE REQUEST LINES IN LOG
+        if '*-----*' in line and 'request #' in line:
+            desired_lines.append(line)
+
+            if 'Configuring request #' in line:
+                # Extract URL starting with https://
+                https_url = re.search(url_pattern, line)
+                if https_url:
+                    req_url = https_url.group(0)
+
+                request_number_match = re.search(request_number_pattern, line)
+                if request_number_match:
+                    request_number = request_number_match.group(1)
+                    if request_number and request_number not in req_num:
+                        req_num.append(int(request_number))
+
+                # FIND HOSTNAME
+                hostname_match = re.search(hostname_pattern, line)
+                if hostname_match:
+                    hostname = hostname_match.group(1)
+
+                # APPEND CLIENT --> SERVER
+                nodes.append(('Jabber', hostname, req_url))
+
+            # parts = line.split('request #')
+            # for part in parts[1:]:
+            #     number = ''.join(filter(str.isdigit, part.split()[0]))
+            #     if number and number not in req_num:
+            #         req_num.append(int(number))
+
+        # FIND RESPONSE CODES FOR THE REQUEST
+        if '*-----*' in line and 'HTTP response code' in line:
+            # Find HTTP response code
+            response_code_match = re.search(response_code_pattern, line)
+            if response_code_match:
+                response_code = response_code_match.group(1)
+
+            # Find hostname
+            hostname_match = re.search(hostname_pattern, line)
+            if hostname_match:
+                hostname = hostname_match.group(1)
+            else:
+                hostname = "Not found"
+
+            # Find request number
+            request_number_match = re.search(request_number_pattern, line)
+            if request_number_match:
+                request_number = request_number_match.group(1)
+            else:
+                request_number = "Not found"
+
+            # CREATE DICTIONARY WITH RESPONSE CODE FOR PARTICULAR REQUEST:
+            if response_code == '0':
+                response_code = 'Connection Timeout'
+            elif response_code == '200':
+                response_code = '200 OK'            
+            elif response_code == '404':
+                response_code = 'HTTP 404: Not Found'
+
+            resp_dic[f'request #{request_number}'] = response_code
+
+            # CREATE LIST OF NODES FOR UML DIAGRAM:
+            nodes.append((hostname, 'Jabber', response_code))
+
+    # CREATE DICTIONARY WITH REQUEST AS KEY AND VALUE AS ALL LINES RELATED TO THAT REQUEST
+    for num in set(req_num):
+        req_lines = []
+        for line in lines:
+            if re.search(r'\b'+f'request #{num}'+r'\b', line):
+            # if f'request #{num}' in line:
+                req_lines.append(line)
+
+        req_dic[f'request #{num}'] = req_lines
+
+    summary += f"DNS SRV SUCCESSFUL:    {dns_ok}\n"
+
+    if edge_dns_resp:
+        summary += f"EDGE DNS RECORDS:      {edge_dns_resp}\n"
+    if dns_records:
+        summary += f"DNS RECORDS:         {dns_records}\n"
+    summary += f"UDS SERVERS:           {uds_server_list}\n"
+    summary += f"HOME UDS SERVERS:      {home_uds_server_list}\n"
+    summary += f"JABBER USER:           {jabber_user}\n"
+    summary += f"CUCM USER-ID:          {cucm_user_id}\n"
+
+    return req_num, req_dic, nodes, summary
+
+
+def mermaid(code: str, font_size: int = 25) -> None:
+    html(
+        f"""
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Interactive Sequence UML Diagram</title>
+        <style>
+        .zoom-container {{
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }}
+
+        .zoom-container:hover .zoom-area {{
+            display: block;
+        }}
+
+        .zoom-area {{
+            position: absolute;
+            display: none;
+            border: 2px solid #009688;
+            background-color: rgba(0, 150, 136, 0.2);
+            pointer-events: none;
+        }}
+        </style>
+        </head>
+        <body>
+            <div class="zoom-container">
+                <pre class="mermaid">
+                    {code}
+                </pre>
+                <script type="module">
+                    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+                    mermaid.initialize({{ startOnLoad: true, theme: "default", themeVariables: {{ fontSize: "{font_size}px" }} }});
+                </script>
+                <div class="zoom-area" style="width: 200px; height: 200px; top: 20px; left: 20px;"></div>
+            </div>
+            <script>
+                const container = document.querySelector('.zoom-container');
+                const zoomArea = document.querySelector('.zoom-area');
+
+                container.addEventListener('mousemove', (e) => {{
+                    const rect = container.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    zoomArea.style.left = `${{x}}px`;
+                    zoomArea.style.top = `${{y}}px`;
+                }});
+            </script>
+        </body>
+
+        """,
+        
+        height= st.session_state["svg_height"] + 50,
+        scrolling=True,
+        
+    )
+    
+def generate_uml(data):   
+
+    mermaid_code = "sequenceDiagram;\n"
+
+    
+    for item in data:
+        requester = item[0]
+        destination = item[1]
+
+        if ':' in requester:
+            requester = requester.split(':')[0]
+
+        if ':' in destination:
+            destination = destination.split(':')[0]
+        
+        message = item[2]
+
+        if 'http' in message:
+            mermaid_code += f"    {requester} ->> {destination}: {message} ;\n"
+
+        else:
+            mermaid_code += f"    {requester} -->> {destination}: {message} ;\n"
+
+    return mermaid_code
 
 # def trace_lookup(device):
-    
+
+def extract_zip(zip_file_path, extract_dir):
+    with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_dir)    
 #     trace_lookup_dic = {}
     
 # ADD SIDEBAR OPTIONS
 with st.sidebar:
-    mode = st.selectbox('SELECT OPTION',
-                        ('CTS3 Template', 'Trace Lookup', 'GW Debug', 'Health Check'))
+    st.sidebar.title("Navigation")
+    mode = st.sidebar.radio("Go to", ["CTS3 Template", "Trace Lookup", "GW Debug", "Jabber Log Parser"])
+    # mode = st.selectbox('SELECT OPTION',
+    #                     ('CTS3 Template', 'Trace Lookup', 'GW Debug', 'Health Check'))
 
 if mode == 'CTS3 Template':
   
@@ -2451,4 +2795,89 @@ elif mode == 'Health Check':
                     
         #     call_id = st.selectbox("Enter a ccapi value value to see details: ", options = local_call.keys())
         
+elif mode == "Jabber Log Parser":
+    st.title("Cisco Jabber Logs Analyzer")
+    
+    uploaded_file = st.file_uploader("Upload Jabber log file", type=['zip'])
+    
+    if "svg_height" not in st.session_state:
+        st.session_state["svg_height"] = 1100
+
+    if "previous_mermaid" not in st.session_state:
+        st.session_state["previous_mermaid"] = ""
+
+    if uploaded_file is not None:
+        # Temporary directory to extract zip file
+        temp_dir = os.path.join(os.getcwd(), "temp_dir")
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
+
+        # Extract the zip file
+        extract_zip(uploaded_file, temp_dir)
+
+        log_directory = search_for_jabber_log(temp_dir)
+
+        # st.write(log_directory)
+        request_num, request_dic, nodes, summary = parse_logs(log_directory)
         
+        if len(request_num) > 30:
+            st.session_state["svg_height"] = 1100
+        elif 15 < len(request_num) < 30:
+            st.session_state["svg_height"] = 800 
+        elif 1 < len(request_num) < 15:
+            st.session_state["svg_height"] = 500 
+        
+
+        # st.write(request_num)
+
+        # uml_logs = (
+        #     """
+        #     sequenceDiagram;
+        #         Alice->>Bob: Hello Bob, how are you ? ;
+        #         Bob->>Alice: Fine, thank you. And you? ;
+        #         create participant Carl ;
+        #         Alice->>Carl: Hi Carl! ;
+        #         create actor D as Donald ;
+        #         Carl->>D: Hi! ;
+        #         destroy Carl ;
+        #         Alice-xCarl: We are too many ;
+        #         destroy Bob ;
+        #         Bob->>Alice: I agree;
+        #     """
+        # )
+        if nodes:
+            uml_logs = generate_uml(nodes)
+            # st.write(uml_logs)
+            mermaid(uml_logs)
+            
+            # if uml_logs != st.session_state["previous_mermaid"]:
+            #     st.session_state["previous_mermaid"] = uml_logs
+            #     time.sleep(1)
+            #     streamlit_js_eval(
+            #         js_expressions='parent.document.getElementsByTagName("iframe")[0].contentDocument.getElementsByClassName("mermaid")[0].getElementsByTagName("svg")[0].getBBox().height',
+            #         key="svg_height",
+            #     )
+
+        if request_num:
+            # st.write("Log Analysis Complete")
+            st.write("Select Request Number")
+            request_number = st.selectbox("Select Request Number", options=set(request_num), index=None, label_visibility='hidden')
+
+            print('REQUEST NUMBER SELECTED:', request_number)
+            # st.write(nodes)
+            # st.write(dns_rep)
+            if request_number == None:
+                pass
+            elif request_number >= 0:
+                request_details = request_dic[f'request #{request_number}']
+
+                # st.write(request_dic)
+                st.write(request_details)
+
+            if summary:
+                st.write('SUMMARY OF LOG')
+                st.write('='*10)
+                st.code(summary)
+
+    else:
+        st.write("Upload a log file to begin analysis.")

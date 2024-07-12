@@ -2,3 +2,10 @@ streamlit
 pandas
 zeep
 lxml
+graphviz
+time
+re
+zipfile
+fnmatch
+subprocess
+pathlib
