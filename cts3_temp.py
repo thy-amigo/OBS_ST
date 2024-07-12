@@ -175,10 +175,13 @@ def unzip_files(directory):
 # Function to search for Jabber.log file
 def search_for_jabber_log(directory):
 
+    jabber_log_path = False
     for root, dirs, files in os.walk(directory):
         for filename in fnmatch.filter(files, 'Jabber.log'):
             jabber_log_path = os.path.join(root, filename)
+            st.write('Jabber Log path: ', jabber_log_path)
             print(f"Found Jabber.log at: {jabber_log_path}")
+
     return jabber_log_path  # Return the path of Jabber.log if found
 
 def open_jabber_log(file_path):
@@ -2821,7 +2824,7 @@ elif mode == "Jabber Log Parser":
                 st.write(os.path.join(root, name))
             for name in dirs:
                 st.write(os.path.join(root, name))
-                
+
         log_directory = search_for_jabber_log(temp_dir)
 
         # st.write(log_directory)
