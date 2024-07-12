@@ -183,7 +183,7 @@ def search_for_jabber_log(directory):
         for name in files:
             st.write('Filename: ', name)
             st.write('Root: ', root)
-            if name == 'Jabber.log':
+            if name == 'jabber.log':
                 jabber_log_path = os.path.join(root, name)
                 print(f"Found Jabber.log at: {jabber_log_path}")
                 break
